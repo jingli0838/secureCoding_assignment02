@@ -1,0 +1,32 @@
+name: Lint
+
+on: # yamllint disable-line rule:truthy
+  push: {}
+  pull_request: {}
+
+permissions: {}
+
+jobs:
+  build:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      statuses: write # To report GitHub Actions status checks
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Super-linter needs full git history to detect changes
+
+      - name: Run Super-Linter
+        uses: super-linter/super-linter@v7.2.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Required for reporting status checks
+          VALIDATE_ALL_CODEBASE: true # Ensures all files are checked
+          DEFAULT_BRANCH: main # Adjust if your default branch is different
+          VALIDATE_YAML: true # Ensures YAML files are checked
+          VALIDATE_JSCPD: true # Checks for duplicate JavaScript/TypeScript code
